@@ -7,7 +7,8 @@
             <SignCaptcha ref="captchaIn" :belongsTo="'sign-in'"></SignCaptcha>
             <button class="btn0" :disabled="!enableSignIn" @click="Login()">{{ btnText }}</button>
             <p id="to-sign-up"> Don't have an account? <a href="#" @click="ToSignUpOrResetPwdPage('Sign Up')">Sign up here</a> </p>
-            <p id="to-reset-pwd"> Forget your password? <a href="#" @click="ToSignUpOrResetPwdPage('Reset Password')">Reset password</a> </p>
+            <!-- <p id="to-reset-pwd"> Forget your password? <a href="#" @click="ToSignUpOrResetPwdPage('Reset Password')">Reset password</a> </p> -->
+            <p id="to-reset-pwd"> <a href="#" @click="ForgetPwdPrompt()">Forget your password?</a> </p>
         </div>
 
         <!-- [Sign Up] & [Reset Password] share same page -->
@@ -30,7 +31,7 @@
 <script setup lang="ts">
 
 import { useCookies } from "vue3-cookies";
-import { useNotification } from "@kyvg/vue3-notification";
+import { notify } from "@kyvg/vue3-notification";
 import SignCaptcha from "./SignCaptcha.vue";
 import Loader from "./Loader.vue";
 import { loginToken, postLogin, postSignUp, postResetPwd, getPwdRule, CaptchaOK } from "@/share/share";
@@ -38,7 +39,6 @@ import { Domain, URL_VIEW } from "@/share/ip";
 import { isEmailFormat } from "@/share/util";
 
 const { cookies } = useCookies();
-const notification = useNotification()
 
 const loading = ref(false);
 const signPage = ref("in"); // page
@@ -86,7 +86,7 @@ let mounted = false;
 onMounted(async () => {
     const de = await getPwdRule();
     if (de.error != null) {
-        notification.notify({
+        notify({
             title: "Cannot fetch password rule as placeholder",
             text: de.error,
             type: "error"
@@ -94,6 +94,7 @@ onMounted(async () => {
         return
     }
     pwdRule.value = de.data
+
     mounted = true;
 })
 
@@ -138,7 +139,7 @@ const Login = async () => {
     const de = await postLogin(unameLogin.value, pwdLogin.value)
     if (de.error != null) {
         loading.value = false;
-        notification.notify({
+        notify({
             title: "Login Failed",
             text: de.error,
             type: "error" // "warn", "error", "success"
@@ -159,7 +160,7 @@ const Apply = async (action: string) => {
         const de = await postSignUp(unameReg.value, emailReg.value, pwdReg.value, false)
         if (de.error != null) {
             loading.value = false;
-            notification.notify({
+            notify({
                 title: "Sign Up Failed",
                 text: de.error,
                 type: "error"
@@ -170,7 +171,7 @@ const Apply = async (action: string) => {
         const de = await postResetPwd(unameReg.value, emailReg.value, pwdCur.value, pwdReg.value, false)
         if (de.error != null) {
             loading.value = false;
-            notification.notify({
+            notify({
                 title: "Reset Password Failed",
                 text: de.error,
                 type: "error"
@@ -179,7 +180,7 @@ const Apply = async (action: string) => {
         }
     }
 
-    notification.notify({
+    notify({
         // title: "Notice",
         text: (action == "Sign Up" ? "Signed Up" : "Password Reset") + ", please login",
         type: "success"
@@ -202,6 +203,14 @@ const ToSignUpOrResetPwdPage = (t: string) => {
     signPage.value = "up";
     clearInput();
 };
+
+const ForgetPwdPrompt = () => {
+    notify({
+        title: "Notice",
+        text: "please contact National Data Dictionary admin for help",
+        type: "message",
+    })
+}
 
 </script>
 
