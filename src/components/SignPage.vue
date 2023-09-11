@@ -37,7 +37,7 @@
 <script setup lang="ts">
 
 import { useCookies } from "vue3-cookies";
-import { useNotification } from "@kyvg/vue3-notification";
+import { notify } from "@kyvg/vue3-notification";
 import SignCaptcha from "./SignCaptcha.vue";
 import Loader from "./Loader.vue";
 import { loginToken, postLogin, postSignUp, postResetPwd, postEmailVerify, getPwdRule, CaptchaOK } from "@/share/share";
@@ -45,7 +45,6 @@ import { Domain, URL_VIEW } from "@/share/ip";
 import { isEmailFormat } from "@/share/util";
 
 const { cookies } = useCookies();
-const notification = useNotification()
 
 const loading = ref(false);
 const signPage = ref("in"); // page
@@ -93,7 +92,7 @@ let mounted = false;
 onMounted(async () => {
     const de = await getPwdRule();
     if (de.error != null) {
-        notification.notify({
+        notify({
             title: "Cannot fetch password rule as placeholder",
             text: de.error,
             type: "error"
@@ -149,7 +148,7 @@ const Login = async () => {
     const de = await postLogin(unameLogin.value, pwdLogin.value)
     if (de.error != null) {
         loading.value = false;
-        notification.notify({
+        notify({
             title: "Login Failed",
             text: de.error,
             type: "error" // "warn", "error", "success"
@@ -170,7 +169,7 @@ const Apply = async (action: string) => {
         const de = await postSignUp(unameReg.value, emailReg.value, pwdReg.value, true)
         if (de.error != null) {
             loading.value = false;
-            notification.notify({
+            notify({
                 title: "Sign Up Failed",
                 text: de.error,
                 type: "error"
@@ -181,7 +180,7 @@ const Apply = async (action: string) => {
         const de = await postResetPwd(unameReg.value, emailReg.value, "", pwdReg.value, true)
         if (de.error != null) {
             loading.value = false;
-            notification.notify({
+            notify({
                 title: "Reset Password Failed",
                 text: de.error,
                 type: "error"
@@ -190,7 +189,7 @@ const Apply = async (action: string) => {
         }
     }
 
-    notification.notify({
+    notify({
         title: "Notice",
         text: `verification code sent to your email ${emailReg.value}`,
         type: "success"
@@ -204,14 +203,14 @@ const EmailVerification = async (check: boolean) => {
     const de = await postEmailVerify(unameReg.value, codeReg.value, check)
     if (de.error != null) {
         loading.value = false;
-        notification.notify({
+        notify({
             title: "Email Verification Failed",
             text: de.error,
             type: "error"
         })
         return
     }
-    notification.notify({
+    notify({
         // title: "Notice",
         text: (check ? "Email Verified, Signed Up" : "Password Reset") + ", please login",
         type: "success"

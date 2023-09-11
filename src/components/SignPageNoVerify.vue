@@ -81,6 +81,14 @@ const codeInput = ref();
 const captchaIn = ref();
 const captchaUp = ref();
 
+const onResize = () => {
+    // let Width = window.innerWidth + "px";
+    // let Height = window.innerHeight + "px";
+
+    captchaIn?.value?.setupUI(unameInputSI.value.offsetLeft)
+    captchaUp?.value?.setupUI(unameInputSU.value.offsetLeft)
+};
+
 let mounted = false;
 
 onMounted(async () => {
@@ -95,12 +103,16 @@ onMounted(async () => {
     }
     pwdRule.value = de.data
 
+    // listen browser size change
+    window.addEventListener("resize", onResize);
+
     mounted = true;
 })
 
 watchEffect(async () => {
 
     captchaIn?.value?.setupUI(unameInputSI.value.offsetLeft)
+    captchaUp?.value?.setupUI(unameInputSU.value.offsetLeft)
 
     const page = signPage.value;
     const nameSI = unameInputSI?.value;
@@ -225,11 +237,23 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 36%;
-    height: 32%;
+    width: 400px;
+    height: 320px;
     background-color: white;
-    opacity: 0.95;
-    border-radius: 25px;
+    opacity: 0.96;
+    border-radius: 10px;
+}
+
+@media (min-width: 1000px) and (max-width: 1600px) {
+    #login-page {
+        width: 40%;
+    }
+}
+
+@media (min-width: 1600px) {
+    #login-page {
+        width: 640px;
+    }
 }
 
 .textbox {

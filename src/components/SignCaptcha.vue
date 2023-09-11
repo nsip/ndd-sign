@@ -66,6 +66,6 @@ defineExpose({
 input {
     margin-left: 1%;
     text-align: center;
-    width: 50px;
+    width: 70px;
 }
 </style>
