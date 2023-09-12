@@ -2,7 +2,16 @@
     <div v-if="showPage">
         <SignPage />
         <div id="copyright">
-            Copyright@2023 Education Services Australia | <a href="#" @click="ToPolicyPage()">Privacy Policy</a>
+
+            <!-- Copyright@2023 Education Services Australia | <a href="#" @click="ToPolicyPage()">Privacy Policy</a> -->
+
+            Copyright © 2023 Education Services Australia.
+            <a href="https://creativecommons.org/licenses/by/4.0/">
+                <img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by.png" height="20" />
+            </a>.
+            <br>The contents of this page are derived from public domain sources and collaborative contributions from school authorities throughout Australia and New Zealand.
+            <br>They are made available under a Creative Commons <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license.
+
         </div>
     </div>
     <notifications position="top center" :speed="2000" :duration="6000" :closeOnClick="false" />
@@ -63,7 +72,7 @@ body {
     margin-bottom: 10px;
 }
 
-@media (max-height: 360px) {
+@media (max-height: 480px) {
     #copyright {
         visibility: hidden;
     }
