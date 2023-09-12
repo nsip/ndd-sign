@@ -219,7 +219,7 @@ const ToSignUpOrResetPwdPage = (t: string) => {
 const ForgetPwdPrompt = () => {
     notify({
         title: "Notice",
-        text: "please contact National Data Dictionary admin for help",
+        text: "If you have forgotten your password, please contact Georgina or Nick at NSIP to reset the password for you manually",
         type: "message",
     })
 }
