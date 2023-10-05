@@ -1,16 +1,16 @@
 <template>
     <div class="container">
-        <img :src="captchaSrc" alt="captcha image" width="120" height="40" @click="imageClicked">
+        <Captcha ref="refCode" :width="90" :height="22" :bgColor="'rgba(50,50,50,0.2)'" :borderColor="'#5f5f5f'" />
         <input ref="replyInput" v-model="reply">
     </div>
 </template>
 
 <script setup lang="ts">
 
-import { CaptchaOK, getCaptchaImage, putCaptchaValidate } from "@/share/share";
+import Captcha, { CaptchaInstance } from 'vue3-captcha';
+import { CaptchaOK } from "@/share/share";
 
-let captchaId = ''
-const captchaSrc = ref('') // base64, from api
+const refCode = ref<CaptchaInstance>(null)
 const reply = ref('')
 
 const props = defineProps({
@@ -27,7 +27,6 @@ const replyInput = ref()
 let mounted = false;
 
 onMounted(async () => {
-
     switch (props.belongsTo) {
         case 'sign-up':
             dyTop.value = '82%'
@@ -36,19 +35,14 @@ onMounted(async () => {
             dyTop.value = '55%'
             break;
     }
-
-    captchaId = await updateCaptcha('');
-
     mounted = true;
 })
 
 watchEffect(async () => {
+    const c = refCode.value;
     const r = reply.value;
     if (mounted) {
-        if (r.length > 0) {
-
-        }
-        // CaptchaOK.value = r.length > 0 && c?.check(r)
+        CaptchaOK.value = r.length > 0 && c?.check(r)
     }
 })
 
@@ -59,22 +53,6 @@ const setupUI = (left: Number) => {
 defineExpose({
     setupUI,
 })
-
-const updateCaptcha = async (rid: string) => {
-    const captchaRet = await getCaptchaImage(rid)
-    if (captchaRet.error == null) {
-        captchaSrc.value = captchaRet.data.base64
-        return captchaRet.data.id
-    } else {
-        alert(captchaRet.error)
-    }
-    return null
-}
-
-const imageClicked = async () => {
-    captchaId = await updateCaptcha('');
-    alert(captchaId)
-}
 
 </script>
 

@@ -23,6 +23,31 @@ export const getPwdRule = async () => {
     }
 };
 
+export const getCaptchaImage = async (rid: string) => {
+    const mQuery = new Map<string, any>([
+        ["rid", rid.trim()],
+    ]);
+    const rt = await fetchNoBody(`/api/system/captcha`, "GET", mQuery, "");
+    const err = await fetchErr(rt)
+    return {
+        'data': err == null ? (rt as any[])[0] : null,
+        'error': err
+    }
+}
+
+export const putCaptchaValidate = async (id: string, reply: string) => {
+    const mForm = new Map<string, any>([
+        ["id", id.trim()],
+        ["reply", reply.trim()],
+    ]);
+    const rt = await fetchBodyForm(`/api/system/captcha-validate`, "PUT", mEmpty, mForm, "");
+    const err = await fetchErr(rt)
+    return {
+        'data': err == null ? (rt as any[])[0] : null,
+        'error': err
+    }
+}
+
 export const postLogin = async (uname: string, pwd: string) => {
     const mForm = new Map<string, any>([
         ["uname", uname.trim()],
