@@ -48,6 +48,18 @@ export const putCaptchaValidate = async (id: string, reply: string) => {
     }
 }
 
+export const deleteCaptcha = async (id: string) => {
+    const mQuery = new Map<string, any>([
+        ["id", id.trim()],
+    ]);
+    const rt = await fetchNoBody(`/api/system/captcha-remove`, "DELETE", mQuery, "");
+    const err = await fetchErr(rt)
+    return {
+        'data': err == null ? (rt as any[])[0] : null,
+        'error': err
+    }
+}
+
 export const postLogin = async (uname: string, pwd: string) => {
     const mForm = new Map<string, any>([
         ["uname", uname.trim()],

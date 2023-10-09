@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <img :src="captchaSrc" alt="captcha image" width="120" height="40" @click="imageClicked">
-        <input ref="replyInput" v-model="reply">
+        <input ref="replyInput" maxlength="4" v-model="reply">
     </div>
 </template>
 
@@ -45,10 +45,11 @@ onMounted(async () => {
 watchEffect(async () => {
     const r = reply.value;
     if (mounted) {
-        if (r.length > 0) {
-
+        const vr = await putCaptchaValidate(captchaId, r)
+        if (vr.error == null) {
+            // console.log(vr.data)
+            CaptchaOK.value = vr.data
         }
-        // CaptchaOK.value = r.length > 0 && c?.check(r)
     }
 })
 
@@ -73,7 +74,7 @@ const updateCaptcha = async (rid: string) => {
 
 const imageClicked = async () => {
     captchaId = await updateCaptcha('');
-    alert(captchaId)
+    reply.value = '';
 }
 
 </script>
@@ -89,5 +90,6 @@ input {
     margin-left: 1%;
     text-align: center;
     width: 70px;
+    font-size: larger;
 }
 </style>
