@@ -20,7 +20,7 @@
 <script setup lang="ts">
 
 import { notify } from "@kyvg/vue3-notification";
-import SignPage from "@/components/SignPageNoVerify.vue"; // No Verification SignUp & Reset Password Applies
+import SignPage from "@/components/NoSignUp_NoVerify.vue"; // No SignUP, No Verification. Only Reset Password Applies
 import { getPing } from "@/share/share";
 import { URL_API } from "@/share/ip";
 

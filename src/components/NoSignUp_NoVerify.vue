@@ -6,30 +6,24 @@
             <input class="textbox" v-model="pwdLogin" type="password" placeholder="Password" required />
             <SignCaptcha ref="captchaIn" :belongsTo="'sign-in'"></SignCaptcha>
             <button class="btn0" :disabled="!enableSignIn" @click="Login()">{{ btnText }}</button>
-            <p id="to-sign-up"> Don't have an account? <a href="#" @click="ToSignUpOrResetPwdPage('Sign Up')">Sign up here</a> </p>
-            <p id="to-reset-pwd"> Forget your password? <a href="#" @click="ToSignUpOrResetPwdPage('Reset Password')">Reset password</a> </p>
+            <!-- <p id="to-sign-up"> Don't have an account? <a href="#" @click="ToSignUpOrResetPwdPage('Sign Up')">Sign up here</a> </p> -->
+            <p id="to-reset-pwd"> Reset your password? <a href="#" @click="ToSignUpOrResetPwdPage('Reset Password')">Click here</a> </p>
+            <p id="to-forget-pwd"> <a href="#" @click="ForgetPwdPrompt()">Forget your password?</a> </p>
         </div>
 
         <!-- [Sign Up] & [Reset Password] share same page -->
         <div v-if="signPage == 'up'">
-            <h1>{{ actionTitle }}</h1>
+            <h1>{{ actionTitle }} *</h1>
             <input class="textbox" v-model="unameReg" type="text" placeholder="User Name" ref="unameInputSU" required />
-            <input class="textbox" v-model="emailReg" type="email" placeholder="Email" required />
-            <input class="textbox" v-model="pwdReg" type="password" :placeholder="`Password: (${pwdRule})`" required />
+            <input v-if="actionTitle.startsWith('Sign')" class="textbox" v-model="emailReg" type="email" placeholder="Email" required />
+            <input v-if="actionTitle.startsWith('Reset')" class="textbox" v-model="pwdCur" type="password" placeholder="Current Password" required />
+            <input class="textbox" v-model="pwdReg" type="password" :placeholder="`Password (${pwdRule})`" required />
             <input class="textbox" v-model="confirmReg" type="password" placeholder="Confirm Password" required />
             <SignCaptcha ref="captchaUp" :belongsTo="'sign-up'"></SignCaptcha>
             <button class="btn0" :disabled="!enableSignUpOrReset" @click="Apply(actionTitle)">{{ btnText }}</button>
-            <p id="to-sign-in"> Already have an account? <a href="#" @click="ToSignInPage('Sign In')">Sign in here</a> </p>
+            <p id="to-sign-in"> Back to sign in? <a href="#" @click="ToSignInPage('Sign In')">Click here</a> </p>
         </div>
 
-        <!-- [Sign Up] & [Reset Password] share same verification page -->
-        <div v-if="signPage == 'verify'">
-            <h1>Email Verification</h1>
-            <input class="textbox" v-model="unameReg" required readonly />
-            <input class="textbox" v-model="codeReg" type="text" placeholder="Verification Code In Your Email" ref="codeInput" required />
-            <button class="btn0" @click="EmailVerification(actionTitle == 'Sign Up')">Verify</button>
-            <button class="btn1" @click="Apply(actionTitle)">Resent</button>
-        </div>
     </div>
     <Loader id="loader" v-if="loading" />
 </template>
@@ -40,7 +34,7 @@ import { useCookies } from "vue3-cookies";
 import { notify } from "@kyvg/vue3-notification";
 import SignCaptcha from "./SignCaptcha.vue";
 import Loader from "./Loader.vue";
-import { loginToken, postLogin, postSignUp, postResetPwd, postEmailVerify, getPwdRule, CaptchaOK } from "@/share/share";
+import { loginToken, postLogin, postSignUp, postResetPwd, getPwdRule, CaptchaOK } from "@/share/share";
 import { Domain, URL_VIEW } from "@/share/ip";
 import { isEmailFormat } from "@/share/util";
 
@@ -56,18 +50,18 @@ const unameLogin = ref("");
 const pwdLogin = ref("");
 const unameReg = ref("");
 const emailReg = ref("");
+const pwdCur = ref("");
 const pwdReg = ref("");
 const confirmReg = ref("");
-const codeReg = ref("");
 
 const clearInput = () => {
     unameLogin.value = ""
     pwdLogin.value = ""
     unameReg.value = ""
     emailReg.value = ""
+    pwdCur.value = ""
     pwdReg.value = ""
     confirmReg.value = ""
-    codeReg.value = ""
 }
 
 // if '() => {}'', must have 'return' in {}
@@ -75,7 +69,7 @@ const enableSignIn = computed(() => unameLogin.value.length > 0 && pwdLogin.valu
 
 const enableSignUpOrReset = computed(() =>
     unameReg.value.length > 0 &&
-    isEmailFormat(emailReg.value) &&
+    (isEmailFormat(emailReg.value) || pwdCur.value.length > 0) &&
     pwdReg.value.length > 0 && (pwdReg.value === confirmReg.value) &&
     CaptchaOK.value
 )
@@ -86,6 +80,14 @@ const unameInputSU = ref();
 const codeInput = ref();
 const captchaIn = ref();
 const captchaUp = ref();
+
+const onResize = () => {
+    // let Width = window.innerWidth + "px";
+    // let Height = window.innerHeight + "px";
+
+    captchaIn?.value?.setupUI(unameInputSI.value.offsetLeft)
+    captchaUp?.value?.setupUI(unameInputSU.value.offsetLeft)
+};
 
 let mounted = false;
 
@@ -100,12 +102,17 @@ onMounted(async () => {
         return
     }
     pwdRule.value = de.data
+
+    // listen browser size change
+    window.addEventListener("resize", onResize);
+
     mounted = true;
 })
 
 watchEffect(async () => {
 
     captchaIn?.value?.setupUI(unameInputSI.value.offsetLeft)
+    captchaUp?.value?.setupUI(unameInputSU.value.offsetLeft)
 
     const page = signPage.value;
     const nameSI = unameInputSI?.value;
@@ -125,10 +132,6 @@ watchEffect(async () => {
                 CaptchaOK.value = false;
                 captchaUp?.value?.setupUI(nameSU.offsetLeft)
                 break;
-
-            case "verify":
-                code?.focus();
-                break
         }
     }
 })
@@ -166,7 +169,7 @@ const Apply = async (action: string) => {
 
     // action is from {{ actionTitle }}
     if (action == "Sign Up") {
-        const de = await postSignUp(unameReg.value, emailReg.value, pwdReg.value, true)
+        const de = await postSignUp(unameReg.value, emailReg.value, pwdReg.value, false)
         if (de.error != null) {
             loading.value = false;
             notify({
@@ -177,7 +180,7 @@ const Apply = async (action: string) => {
             return
         }
     } else if (action == "Reset Password") {
-        const de = await postResetPwd(unameReg.value, emailReg.value, "", pwdReg.value, true)
+        const de = await postResetPwd(unameReg.value, emailReg.value, pwdCur.value, pwdReg.value, false)
         if (de.error != null) {
             loading.value = false;
             notify({
@@ -190,32 +193,12 @@ const Apply = async (action: string) => {
     }
 
     notify({
-        title: "Notice",
-        text: `verification code sent to your email ${emailReg.value}`,
-        type: "success"
-    })
-    ToEmailVerifyPage();
-    loading.value = false;
-};
-
-const EmailVerification = async (check: boolean) => {
-    loading.value = true;
-    const de = await postEmailVerify(unameReg.value, codeReg.value, check)
-    if (de.error != null) {
-        loading.value = false;
-        notify({
-            title: "Email Verification Failed",
-            text: de.error,
-            type: "error"
-        })
-        return
-    }
-    notify({
         // title: "Notice",
-        text: check ? "Email Verified, Signed Up" : "Password Reset",
+        text: action == "Sign Up" ? "Signed Up" : "Password Reset",
         type: "success"
     })
-    ToSignInPage('Sing In');
+    ToSignInPage('Sign In');
+
     loading.value = false;
 };
 
@@ -233,10 +216,13 @@ const ToSignUpOrResetPwdPage = (t: string) => {
     clearInput();
 };
 
-const ToEmailVerifyPage = () => {
-    signPage.value = "verify";
-    // clearInput();
-};
+const ForgetPwdPrompt = () => {
+    notify({
+        title: "Notice",
+        text: "If you have forgotten your password, please contact Georgina or Nick at NSIP to reset the password for you manually",
+        type: "message",
+    })
+}
 
 </script>
 
@@ -251,11 +237,23 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 36%;
-    height: 32%;
+    width: 400px;
+    height: 340px;
     background-color: white;
-    opacity: 0.95;
-    border-radius: 25px;
+    opacity: 0.96;
+    border-radius: 10px;
+}
+
+@media (min-width: 1000px) and (max-width: 1600px) {
+    #login-page {
+        width: 40%;
+    }
+}
+
+@media (min-width: 1600px) {
+    #login-page {
+        width: 640px;
+    }
 }
 
 .textbox {
@@ -290,6 +288,13 @@ h1 {
 }
 
 #to-reset-pwd {
+    position: absolute;
+    right: 5%;
+    bottom: 6%;
+    font-size: small;
+}
+
+#to-forget-pwd {
     position: absolute;
     right: 5%;
     bottom: 0%;

@@ -194,7 +194,7 @@ const Apply = async (action: string) => {
 
     notify({
         // title: "Notice",
-        text: (action == "Sign Up" ? "Signed Up" : "Password Reset") + ", please login",
+        text: action == "Sign Up" ? "Signed Up" : "Password Reset",
         type: "success"
     })
     ToSignInPage('Sign In');
