@@ -5,7 +5,7 @@
             <input class="textbox" v-model="unameLogin" type="text" placeholder="User Name" ref="unameInputSI" autofocus required />
             <input class="textbox" v-model="pwdLogin" type="password" placeholder="Password" required />
             <SignCaptcha ref="captchaIn" :belongsTo="'sign-in'"></SignCaptcha>
-            <button class="btn0" :disabled="!enableSignIn" @click="Login()">{{ btnText }}</button>
+            <button class="btnUpIn" v-if="enableSignIn" @click="Login()">{{ btnText }}</button>
             <p id="to-sign-up"> Don't have an account? <a href="#" @click="ToSignUpOrResetPwdPage('Sign Up')">Sign up here</a> </p>
             <p id="to-reset-pwd"> Forget your password? <a href="#" @click="ToSignUpOrResetPwdPage('Reset Password')">Reset password</a> </p>
         </div>
@@ -18,7 +18,7 @@
             <input class="textbox" v-model="pwdReg" type="password" :placeholder="`Password: (${pwdRule})`" required />
             <input class="textbox" v-model="confirmReg" type="password" placeholder="Confirm Password" required />
             <SignCaptcha ref="captchaUp" :belongsTo="'sign-up'"></SignCaptcha>
-            <button class="btn0" :disabled="!enableSignUpOrReset" @click="Apply(actionTitle)">{{ btnText }}</button>
+            <button class="btnUpIn" v-if="enableSignUpOrReset" @click="Apply(actionTitle)">{{ btnText }}</button>
             <p id="to-sign-in"> Already have an account? <a href="#" @click="ToSignInPage('Sign In')">Sign in here</a> </p>
         </div>
 
@@ -27,8 +27,8 @@
             <h1>Email Verification</h1>
             <input class="textbox" v-model="unameReg" required readonly />
             <input class="textbox" v-model="codeReg" type="text" placeholder="Verification Code In Your Email" ref="codeInput" required />
-            <button class="btn0" @click="EmailVerification(actionTitle == 'Sign Up')">Verify</button>
-            <button class="btn1" @click="Apply(actionTitle)">Resent</button>
+            <button class="btnUpIn" @click="EmailVerification(actionTitle == 'Sign Up')">Verify</button>
+            <button class="btnResend" @click="Apply(actionTitle)">Resend</button>
         </div>
     </div>
     <Loader id="loader" v-if="loading" />
@@ -38,7 +38,7 @@
 
 import { useCookies } from "vue3-cookies";
 import { notify } from "@kyvg/vue3-notification";
-import SignCaptcha from "./SignCaptcha.vue";
+import SignCaptcha from "./CaptchaNew.vue";
 import Loader from "./Loader.vue";
 import { loginToken, postLogin, postSignUp, postResetPwd, postEmailVerify, getPwdRule, CaptchaOK } from "@/share/share";
 import { Domain, URL_VIEW } from "@/share/ip";
@@ -263,13 +263,13 @@ h1 {
     width: 90%;
 }
 
-.btn0 {
+.btnUpIn {
     float: right;
     margin-right: 4.5%;
     margin-bottom: 5%;
 }
 
-.btn1 {
+.btnResend {
     float: right;
     margin-right: 2%;
     margin-bottom: 5%;
