@@ -12,18 +12,17 @@
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.4.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
-        "@fortawesome/vue-fontawesome": "^3.0.3",
+        "@fortawesome/vue-fontawesome": "^3.0.5",
         "@kyvg/vue3-notification": "^3.0.2",
         "mitt": "^3.0.1",
-        "vue": "^3.3.7",
-        "vue3-captcha": "^0.3.4",
+        "vue": "^3.3.8",
         "vue3-cookies": "^1.0.6",
         "vue3-spinner": "^0.0.17"
     },
     "devDependencies": {
         "@tsconfig/node18": "^18.2.2",
-        "@types/node": "^20.8.10",
-        "@vitejs/plugin-vue": "^4.4.0",
+        "@types/node": "^20.9.0",
+        "@vitejs/plugin-vue": "^4.4.1",
         "@vue/tsconfig": "^0.4.0",
         "npm-run-all": "^4.1.5",
         "typescript": "~5.2.2",
