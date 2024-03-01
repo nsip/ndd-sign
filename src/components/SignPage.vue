@@ -38,8 +38,8 @@
 
 import { useCookies } from "vue3-cookies";
 import { notify } from "@kyvg/vue3-notification";
-import SignCaptcha from "./CaptchaNew.vue";
-import Loader from "./Loader.vue";
+import SignCaptcha from "@/components/CaptchaNew.vue"
+import Loader from "@/components/Loader.vue"
 import { loginToken, postLogin, postSignUp, postResetPwd, postEmailVerify, getPwdRule, CaptchaOK } from "@/share/share";
 import { Domain, URL_VIEW } from "@/share/ip";
 import { isEmailFormat } from "@/share/util";
