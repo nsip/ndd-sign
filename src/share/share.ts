@@ -6,7 +6,7 @@ export const loginToken = ref(""); // without 'Bearer '
 export const CaptchaOK = ref(false)
 
 export const getPing = async () => {
-    const rt = await fetchNoBody(`/api/system/ver`, "GET", mEmpty, "");
+    const rt = await fetchNoBody(`/api/sys/ver`, "GET", mEmpty, "");
     const err = await fetchErr(rt)
     return {
         'data': err == null ? (rt as any[])[0] : null,
@@ -27,7 +27,7 @@ export const getCaptchaImage = async (rid: string) => {
     const mQuery = new Map<string, any>([
         ["rid", rid.trim()],
     ]);
-    const rt = await fetchNoBody(`/api/system/captcha`, "GET", mQuery, "");
+    const rt = await fetchNoBody(`/api/sys/captcha`, "GET", mQuery, "");
     const err = await fetchErr(rt)
     return {
         'data': err == null ? (rt as any[])[0] : null,
@@ -40,7 +40,7 @@ export const putCaptchaValidate = async (id: string, reply: string) => {
         ["id", id.trim()],
         ["reply", reply.trim()],
     ]);
-    const rt = await fetchBodyForm(`/api/system/captcha-validate`, "PUT", mEmpty, mForm, "");
+    const rt = await fetchBodyForm(`/api/sys/captcha-validate`, "PUT", mEmpty, mForm, "");
     const err = await fetchErr(rt)
     return {
         'data': err == null ? (rt as any[])[0] : null,
@@ -52,7 +52,7 @@ export const deleteCaptcha = async (id: string) => {
     const mQuery = new Map<string, any>([
         ["id", id.trim()],
     ]);
-    const rt = await fetchNoBody(`/api/system/captcha-remove`, "DELETE", mQuery, "");
+    const rt = await fetchNoBody(`/api/sys/captcha-remove`, "DELETE", mQuery, "");
     const err = await fetchErr(rt)
     return {
         'data': err == null ? (rt as any[])[0] : null,
