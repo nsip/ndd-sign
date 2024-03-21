@@ -4,8 +4,8 @@
             <h1>{{ actionTitle }}</h1>
             <input class="textbox" v-model="unameLogin" type="text" placeholder="User Name" ref="unameInputSI" autofocus required />
             <input class="textbox" v-model="pwdLogin" type="password" placeholder="Password" required />
-            <SignCaptcha ref="captchaIn" :belongsTo="'sign-in'"></SignCaptcha>
-            <button class="btnUpIn" v-if="enableSignIn" @click="Login()">{{ btnText }}</button>
+            <SignCaptcha ref="captchaIn" :belongsTo="'sign-in'" @keyup="LoginAction"></SignCaptcha>
+            <button v-if="enableSignIn" class="btnUpIn" @click="Login">{{ btnText }}</button>
             <!-- <p id="to-sign-up"> Don't have an account? <a href="#" @click="ToSignUpOrResetPwdPage('Sign Up')">Sign up here</a> </p> -->
             <p id="to-reset-pwd"> Reset your password? <a href="#" @click="ToSignUpOrResetPwdPage('Reset Password')">Click here</a> </p>
             <p id="to-forget-pwd"> <a href="#" @click="ForgetPwdPrompt()">Forget your password?</a> </p>
@@ -162,6 +162,12 @@ const Login = async () => {
     ToViewSite()
     loading.value = false;
 };
+
+const LoginAction = async (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+        Login()
+    }
+}
 
 const Apply = async (action: string) => {
 
