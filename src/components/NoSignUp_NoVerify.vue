@@ -164,7 +164,7 @@ const Login = async () => {
 };
 
 const LoginAction = async (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && enableSignIn.value) {
         Login()
     }
 }
