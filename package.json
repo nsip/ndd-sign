@@ -16,7 +16,7 @@
         "@fortawesome/vue-fontawesome": "^3.0.6",
         "@kyvg/vue3-notification": "^3.2.1",
         "mitt": "^3.0.1",
-        "vue": "^3.4.23",
+        "vue": "^3.4.25",
         "vue3-cookies": "^1.0.6"
     },
     "devDependencies": {
@@ -28,7 +28,7 @@
         "typescript": "~5.4.5",
         "unplugin-auto-import": "^0.17.5",
         "vite": "^5.2.10",
-        "vue-tsc": "^2.0.13",
+        "vue-tsc": "^2.0.14",
         "vue3-spinner": "^0.0.17"
     }
 }
