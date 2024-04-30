@@ -16,7 +16,7 @@
         "@fortawesome/vue-fontawesome": "^3.0.6",
         "@kyvg/vue3-notification": "^3.2.1",
         "mitt": "^3.0.1",
-        "vue": "^3.4.25",
+        "vue": "^3.4.26",
         "vue3-cookies": "^1.0.6"
     },
     "devDependencies": {
