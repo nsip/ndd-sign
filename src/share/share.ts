@@ -23,6 +23,15 @@ export const getPwdRule = async () => {
     }
 };
 
+export const getSysStatus = async () => {
+    const rt = await fetchNoBody(`/api/sys/status`, "GET", mEmpty, "");
+    const err = await fetchErr(rt)
+    return {
+        'data': err == null ? (rt as any[])[0] : null,
+        'error': err
+    }
+}
+
 export const getCaptchaImage = async (rid: string) => {
     const mQuery = new Map<string, any>([
         ["rid", rid.trim()],
