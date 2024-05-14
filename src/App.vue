@@ -1,5 +1,6 @@
 <template>
-    <div v-if="showPage">
+
+    <div v-if="status == 'normal'">
         <SignPage />
         <div id="copyright">
 
@@ -14,23 +15,30 @@
 
         </div>
     </div>
+
+    <div v-if="status == 'maintenance'" id="notification-box">
+        <h2>Data Dictionary Under Upgrading or Maintenance</h2>
+    </div>
+
     <notifications position="top center" :speed="2000" :duration="6000" :closeOnClick="false" />
+
 </template>
 
 <script setup lang="ts">
 
 import { notify } from "@kyvg/vue3-notification";
 import SignPage from "@/components/NoSignUp_NoVerify.vue"; // No SignUP, No Verification. Only Reset Password Applies
-import { getPing } from "@/share/share";
+import { getPing, getSysStatus } from "@/share/share";
 import { URL_API } from "@/share/ip";
 
-const showPage = ref(false);
+const status = ref('');
 
 let mounted = false;
 
 onMounted(async () => {
+
     // test backend api available
-    const de = await getPing();
+    let de = await getPing();
     if (de.error != null) {
         notify({
             title: "Backend Service is NOT Available",
@@ -39,7 +47,18 @@ onMounted(async () => {
         })
         return
     }
-    showPage.value = true
+
+    // fetch status
+    de = await getSysStatus();
+    if (de.error != null) {
+        notify({
+            title: "unable to get system status",
+            text: de.error,
+            type: "error"
+        })
+        return
+    }
+    status.value = de.data
 
     mounted = true
 });
@@ -78,4 +97,27 @@ body {
     }
 }
 
+#notification-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 340px;
+    background-color: white;
+    opacity: 0.96;
+    border-radius: 10px;
+}
+
+@media (min-width: 1000px) and (max-width: 1600px) {
+    #notification-box {
+        width: 40%;
+    }
+}
+
+@media (min-width: 1600px) {
+    #notification-box {
+        width: 640px;
+    }
+}
 </style>
